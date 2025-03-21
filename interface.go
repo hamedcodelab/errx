@@ -35,14 +35,5 @@ func (e *ErrX) WithCode(c int) ErrXModel {
 }
 
 func (e *ErrX) Error() string {
-	switch e.Typ {
-	case ErrorValidation:
-		return ErrorValidation.String() + e.Msg + http.StatusText(e.Code)
-	default:
-		return ""
-	}
-}
-
-func Validation(er error) ErrXModel {
-	return NewErrX(er).WithType(ErrorValidation).WithCode(http.StatusBadRequest)
+	return string(e.Typ) + " " + e.Msg + " (" + http.StatusText(e.Code) + ")"
 }

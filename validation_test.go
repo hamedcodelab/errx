@@ -7,5 +7,5 @@ import (
 )
 
 func TestValidationErr(t *testing.T) {
-	log.Println(Validation(errors.New("test validation")).Error())
+	log.Println(Forbidden(errors.New("test validation")).Error())
 }
