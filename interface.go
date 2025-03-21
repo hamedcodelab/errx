@@ -4,8 +4,8 @@ import "net/http"
 
 type ErrXModel interface {
 	error
-	ValidationErr() ErrXModel
-	AddMessage(msg string) ErrXModel
+	WithType(typ Error) ErrXModel
+	WithCode(c int) ErrXModel
 }
 
 type ErrX struct {
@@ -14,20 +14,24 @@ type ErrX struct {
 	Code int
 }
 
-func NewErrX(e any) ErrXModel {
+func NewErrX(e error) ErrXModel {
 	if e, ok := e.(ErrXModel); ok {
 		return e
 	}
 
-	if e, ok := e.(error); ok {
-		return newErrX(0, e.Error())
+	return &ErrX{
+		Msg: e.Error(),
 	}
-
-	return &ErrX{}
 }
 
-func newErrX(code int, err any) ErrXModel {
-	return &ErrX{Code: code, Msg: err.(string)}
+func (e *ErrX) WithType(typ Error) ErrXModel {
+	e.Typ = typ
+	return e
+}
+
+func (e *ErrX) WithCode(c int) ErrXModel {
+	e.Code = c
+	return e
 }
 
 func (e *ErrX) Error() string {
@@ -39,13 +43,6 @@ func (e *ErrX) Error() string {
 	}
 }
 
-func (e *ErrX) ValidationErr() ErrXModel {
-	e.Typ = ErrorValidation
-	e.Code = http.StatusBadRequest
-	return e
-}
-
-func (e *ErrX) AddMessage(msg string) ErrXModel {
-	e.Msg = msg
-	return e
+func Validation(er error) ErrXModel {
+	return NewErrX(er).WithType(ErrorValidation).WithCode(http.StatusBadRequest)
 }
