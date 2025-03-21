@@ -7,5 +7,5 @@ import (
 )
 
 func TestValidationErr(t *testing.T) {
-	log.Println(NewErrX().ValidationErr(errors.New("dfdf")))
+	log.Println(NewErrX(errors.New("dfdf")).ValidationErr())
 }
