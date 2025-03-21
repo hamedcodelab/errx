@@ -5,6 +5,7 @@ import "net/http"
 type ErrXModel interface {
 	error
 	ValidationErr() ErrXModel
+	AddMessage(msg string) ErrXModel
 }
 
 type ErrX struct {
@@ -40,6 +41,11 @@ func (e *ErrX) Error() string {
 
 func (e *ErrX) ValidationErr() ErrXModel {
 	e.Typ = ErrorValidation
-	e.Code = http.StatusUnprocessableEntity
+	e.Code = http.StatusBadRequest
+	return e
+}
+
+func (e *ErrX) AddMessage(msg string) ErrXModel {
+	e.Msg = msg
 	return e
 }
