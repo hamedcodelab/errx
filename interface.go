@@ -6,6 +6,7 @@ type ErrXModel interface {
 	WithCode(c int) ErrXModel
 	GetType() Error
 	GetMessage() string
+	GetStructuredMessage() string
 	GetCode() int
 	GetStack() string
 }

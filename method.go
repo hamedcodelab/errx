@@ -1,6 +1,7 @@
 package errx
 
 import (
+	"encoding/json"
 	"net/http"
 	"runtime"
 )
@@ -48,6 +49,22 @@ func (e *ErrX) Error() string {
 
 func (e *ErrX) GetMessage() string {
 	return e.Msg
+}
+
+func (e *ErrX) GetStructuredMessage() string {
+	type StructuredMessage struct {
+		Message string `json:"message"`
+		Code    int    `json:"code"`
+	}
+
+	msg := StructuredMessage{
+		Message: e.Msg,
+		Code:    e.Code,
+	}
+
+	b, _ := json.Marshal(msg)
+
+	return string(b)
 }
 
 func (e *ErrX) GetCode() int {

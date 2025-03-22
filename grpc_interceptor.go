@@ -15,19 +15,20 @@ func GrpcErrorInterceptor() grpc.ServerOption {
 		if err != nil {
 			var errorModel ErrXModel
 			if errors.As(err, &errorModel) {
+				msg := errorModel.GetStructuredMessage()
 				switch errorModel.GetType() {
 				case ErrorValidation:
-					return nil, status.Error(codes.InvalidArgument, errorModel.GetMessage())
+					return nil, status.Error(codes.InvalidArgument, msg)
 				case ErrorForbidden:
-					return nil, status.Error(codes.PermissionDenied, errorModel.GetMessage())
+					return nil, status.Error(codes.PermissionDenied, msg)
 				case ErrorUnauthorized:
-					return nil, status.Error(codes.Unauthenticated, errorModel.GetMessage())
+					return nil, status.Error(codes.Unauthenticated, msg)
 				case ErrorNotFound:
-					return nil, status.Error(codes.NotFound, errorModel.GetMessage())
+					return nil, status.Error(codes.NotFound, msg)
 				case ErrorTooManyRequests:
-					return nil, status.Error(codes.ResourceExhausted, errorModel.GetMessage())
+					return nil, status.Error(codes.ResourceExhausted, msg)
 				case ErrorConflict:
-					return nil, status.Error(codes.AlreadyExists, errorModel.GetMessage())
+					return nil, status.Error(codes.AlreadyExists, msg)
 				default:
 					fmt.Println(errorModel.GetStack())
 					return nil, status.Error(codes.Internal, InternalServerError(err).GetMessage())
