@@ -3,6 +3,7 @@ package errx
 import (
 	"context"
 	"errors"
+	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -28,7 +29,7 @@ func GrpcErrorInterceptor() grpc.ServerOption {
 				case ErrorConflict:
 					return nil, status.Error(codes.AlreadyExists, errorModel.GetMessage())
 				default:
-					//fmt.Println(errorModel.GetStack())
+					fmt.Println(errorModel.GetStack())
 					return nil, status.Error(codes.Internal, InternalServerError(err).GetMessage())
 				}
 			} else {

@@ -7,4 +7,5 @@ type ErrXModel interface {
 	GetType() Error
 	GetMessage() string
 	GetCode() int
+	GetStack() string
 }

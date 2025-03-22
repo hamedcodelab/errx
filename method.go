@@ -1,11 +1,16 @@
 package errx
 
-import "net/http"
+import (
+	"net/http"
+	"runtime"
+)
 
 type ErrX struct {
-	Typ  Error
-	Msg  string
-	Code int
+	Typ   Error
+	Msg   string
+	Code  int
+	Stack string
+	Err   error
 }
 
 func NewErrX(e error) ErrXModel {
@@ -13,8 +18,13 @@ func NewErrX(e error) ErrXModel {
 		return e
 	}
 
+	stackBuf := make([]byte, 1024)
+	runtime.Stack(stackBuf, false)
+
 	return &ErrX{
-		Msg: e.Error(),
+		Msg:   e.Error(),
+		Err:   e,
+		Stack: string(stackBuf),
 	}
 }
 
@@ -42,4 +52,8 @@ func (e *ErrX) GetMessage() string {
 
 func (e *ErrX) GetCode() int {
 	return e.Code
+}
+
+func (e *ErrX) GetStack() string {
+	return e.Stack
 }
